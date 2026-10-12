@@ -495,7 +495,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
   main{max-width:none;padding:24px clamp(32px,5vw,96px) 64px}
   .hero h1{max-width:none;font-size:clamp(40px,4vw,60px)}
   .hero .lead{max-width:62ch;font-size:20px}
-  .hero-portrait{max-width:none;width:100%;height:min(64vh,680px);aspect-ratio:auto;object-position:center 40%;border-radius:22px}
+  .hero-portrait{max-width:720px;width:100%;height:min(46vh,420px);aspect-ratio:auto;object-position:center 40%;border-radius:22px}
   .hero-note{max-width:820px;font-size:20px}
   .tabs{justify-content:center}
   .tabs button{font-size:15px;padding:12px 18px}
@@ -506,6 +506,36 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
   .grid3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
   main>.card>p{max-width:95ch}
   main>.card[style*="text-align:center"]>p{margin-left:auto;margin-right:auto}
+}
+
+/* ===== Desktop chat: centred full-screen app layout ===== */
+#chatHead,#chatFoot{display:none}
+@media (min-width:900px){
+  #chatHead,#chatFoot{display:none}
+  #avc.chat{padding:64px 24px 0;align-items:stretch}
+  #avc.chat #chatHead{display:block;position:absolute;left:0;right:0;top:0;height:64px;background:var(--card);border-bottom:1px solid var(--line);z-index:5}
+  #chatHead .ch-in{max-width:860px;height:100%;margin:0 auto;display:flex;align-items:center;gap:12px;padding:0 60px 0 62px}
+  #chatHead .ch-t{display:flex;flex-direction:column;line-height:1.25}
+  #chatHead .ch-t b{font:600 17px system-ui,sans-serif;color:var(--ink)}
+  #chatHead .ch-t span{font:13px system-ui,sans-serif;color:var(--mute)}
+  #chatHead #chatNew{margin-left:auto;padding:8px 16px;font-size:13px}
+  html.chatmode #avc.chat #av{position:absolute!important;left:max(24px,calc((100vw - 860px)/2))!important;top:8px!important;width:48px!important;height:48px!important;margin:0!important;z-index:6}
+  html.chatmode #avc.chat #chatX{top:12px;right:max(24px,calc((100vw - 860px)/2))}
+  html.chatmode #avc.chat #docX,html.chatmode #avc.chat #docX.ball{display:none}
+  html.chatmode #avc.chat .log{width:auto;max-width:none;margin:0 -24px;padding:28px max(24px,calc((100vw - 860px)/2)) 12px;font-size:16.5px;line-height:1.6}
+  html.chatmode #avc.chat #chips,html.chatmode #avc.chat .composer,html.chatmode #avc.chat #chatFoot{width:100%;max-width:860px;margin-left:auto;margin-right:auto}
+  html.chatmode #avc.chat #chips{flex-wrap:wrap;justify-content:center;overflow:visible;padding:0;margin-top:10px;margin-bottom:6px;max-height:none}
+  html.chatmode #avc.chat #chips.gone{max-height:0;margin:0}
+  html.chatmode #avc.chat #chips button{font-size:14px;padding:9px 16px;white-space:normal}
+  html.chatmode #avc.chat .m{max-width:82%;padding:14px 18px}
+  html.chatmode #avc.chat .m.u{width:fit-content;margin-left:auto;max-width:75%}
+  html.chatmode #avc.chat .m.c{position:relative;margin-left:46px;background:var(--card);border:1px solid var(--line);border-top-left-radius:6px}
+  html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-46px;top:0;width:34px;height:34px;border-radius:10px;background:url(doc.webp) center/cover;box-shadow:0 0 0 1px var(--line)}
+  html.chatmode #avc.chat .m.c .cp{position:absolute;top:8px;right:10px;opacity:0;transition:opacity .15s;font:600 12px system-ui,sans-serif;padding:4px 10px;border-radius:999px;background:var(--bg);color:var(--mute);border:1px solid var(--line)}
+  html.chatmode #avc.chat .m.c:hover .cp,html.chatmode #avc.chat .m.c .cp:focus-visible{opacity:1}
+  html.chatmode #avc.chat .composer{margin-top:6px;margin-bottom:6px;padding:8px 8px 8px 22px;border-radius:22px;box-shadow:0 8px 30px rgba(0,0,0,.10)}
+  html.chatmode #avc.chat #in{font-size:17px;max-height:220px}
+  #avc.chat #chatFoot{display:block;flex:none;text-align:center;font:12px/1.5 system-ui,sans-serif;color:var(--mute);margin-bottom:14px}
 }
 </style>
 </head><body>
@@ -554,7 +584,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
     <span class="pill">Plain language</span>
     <span class="pill">Your pace</span>
   </div>
-  <picture><source media="(min-width:900px)" srcset="images/hero-desktop.webp"><img class="hero-portrait" src="images/hero-mobile.webp" alt="Cathal in prayer position before a golden Buddha statue in a temple hall" width="900" height="900"></picture>
+  <picture><source media="(min-width:900px)" srcset="hero-desktop.webp"><img class="hero-portrait" src="hero-mobile.webp" alt="Cathal in prayer position before a golden Buddha statue in a temple hall" width="900" height="900"></picture>
   <p class="hero-note">I wanted to see if AI could somehow give satisfying and inspiring answers, even though it is extremely hard to replace elders in the tradition of letting go. It’s a good digital companion friend amongst the freight train of distractions that you have to see every day on your devices.</p>
 </div>
 
@@ -562,6 +592,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 
 <section class="view on" id="coach">
 <div class="card" id="avc"><button type="button" id="docX" aria-label="Put Doc to sleep" title="Put Doc to sleep"><svg viewBox="0 0 100 100" aria-hidden="true"><g transform="rotate(-22 36 24)"><path d="M28 28C25 10 32 3 38 6C44 9 44 22 42 30Z" fill="#d9372e"/></g><g transform="rotate(22 64 24)"><path d="M72 28C75 10 68 3 62 6C56 9 56 22 58 30Z" fill="#d9372e"/></g><ellipse cx="11" cy="58" rx="8" ry="15" fill="#d9372e"/><ellipse cx="89" cy="58" rx="8" ry="15" fill="#d9372e"/><circle cx="50" cy="58" r="38" fill="#fbf6ee" stroke="#d9372e" stroke-width="4"/><path d="M13 66Q50 56 87 66A38 38 0 0 1 13 66Z" fill="#f2877b"/><path d="M30 50Q36 55 42 50M58 50Q64 55 70 50" fill="none" stroke="#33c6ea" stroke-width="3.5" stroke-linecap="round"/><circle cx="26" cy="58" r="3.5" fill="#f4a7a0" opacity=".8"/><circle cx="74" cy="58" r="3.5" fill="#f4a7a0" opacity=".8"/></svg></button><button type="button" class="chat-x" id="chatX" aria-label="Close chat">&times;</button>
+<div id="chatHead"><div class="ch-in"><div class="ch-t"><b>Doc</b><span>Your letting-go companion</span></div><button type="button" id="chatNew" class="ghost">New chat</button></div></div>
 <div id="stage"><video id="vid" playsinline controls preload="none"></video></div>
 <svg id="av" viewBox="0 0 200 220" role="img" aria-label="Doc, a friendly round white companion robot with red ears and glowing cyan eyes"><defs>
 <radialGradient id="dbody" cx=".34" cy=".26" r=".9"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#f6f0e8"/><stop offset=".9" stop-color="#dcd2c7"/><stop offset="1" stop-color="#c2b5a8"/></radialGradient>
@@ -597,6 +628,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 <div class="log" id="log"></div>
 <div class="chips" id="chips"></div>
 <div class="composer"><textarea id="in" rows="1" placeholder="Message Doc…" aria-label="Message to Doc" enterkeyhint="send" autocomplete="off"></textarea><button id="send" type="button" aria-label="Send" disabled><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
+<p id="chatFoot">Enter to send · Shift+Enter for a new line · Esc to leave. Doc is an AI companion, not a therapist.</p>
 <p id="startHint" class="sub" style="text-align:center;font-size:13px;margin:6px 4px 0;color:var(--mute)">Start with: <i>“I'm feeling stuck”</i> or <i>“Guide me”</i></p>
 <div id="memNote" class="sub" style="text-align:center;margin:8px 4px 0;font-size:12px">Doc has memory enabled, so he can remember your past conversations. You can <button id="fget" style="font:inherit;font-weight:600;color:var(--acc);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer">forget this conversation</button>.</div>
 </div>
@@ -772,7 +804,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 
 <section class="view" id="about">
 <div class="card" style="padding:0;overflow:hidden">
-<img src="images/about-photo.webp" alt="Quiet moment beside a lake in Thailand" style="display:block;width:180px;height:180px;aspect-ratio:1/1;object-fit:cover;object-position:center 18%;margin:22px auto 0;border-radius:34%">
+<img src="about-photo.webp" alt="Quiet moment beside a lake in Thailand" style="display:block;width:180px;height:180px;aspect-ratio:1/1;object-fit:cover;object-position:center 18%;margin:22px auto 0;border-radius:34%">
 <div style="padding:22px 20px 26px">
 <h2 style="margin-top:0">About Me</h2>
 <p style="margin:0">I’m Cathal, 29 years old, and I’ve lived in Thailand as a Buddhist monk for almost 3 years. I have been on the letting go pathway since I was about 24.</p>
@@ -823,7 +855,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 </div>
 <div class="sec">About Doc</div>
 <div class="card" style="text-align:center">
-<img class="hi" src="images/doc.webp" alt="Doc, a friendly round white and red companion robot with glowing blue eyes" width="120" height="120" style="display:block;margin:0 auto;width:120px;height:120px;border-radius:26%;box-shadow:0 6px 18px rgba(0,0,0,.18)">
+<img class="hi" src="doc.webp" alt="Doc, a friendly round white and red companion robot with glowing blue eyes" width="120" height="120" style="display:block;margin:0 auto;width:120px;height:120px;border-radius:26%;box-shadow:0 6px 18px rgba(0,0,0,.18)">
 <h2 style="margin:6px 0 4px">Doc</h2>
 <p class="sub" style="font-size:19px;color:var(--ink);margin:0"><i>Prompted and curated by an LLM to be a straightforward, honest, no-B.S. guide back to the path (with a hint of kindness…)</i></p>
 </div>
@@ -848,7 +880,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 <p class="sub" style="font-size:16px;line-height:1.55;color:var(--ink)">Doc is a lightweight retrieval-augmented chat companion. The page itself is a single static file (plain HTML, CSS and JavaScript, no framework and no account system), and all of Doc’s intelligence lives behind one chat endpoint.</p>
 <p class="sub" style="font-size:16px;line-height:1.55;color:var(--ink);margin-bottom:0">When you send a message, the browser posts your recent conversation to a Cloudflare AI Search project. That service retrieves the most relevant passages from a curated library of letting-go teachings, drawn from the Kruba Ajahns of the Buddha Dhamma and from figures not tied to any religion or tradition, such as J. Krishnamurti, U.G. Krishnamurti and Dr. David R. Hawkins, and hands them to a language model, which writes the reply. Because the answer is built from that library, it always sticks to the core principles, but it differs in how it presents them and in the language it uses with you, so that the essence of the message comes across.</p>
 </div>
-<div class="card"><div class="num">FUN FACT</div><figure style="margin:10px 0 14px;text-align:center"><img src="images/phantasy-star-universe.webp" alt="Screenshot from Phantasy Star Universe: a small round red and white floating robot beside a player character in a spaceship room, saying “Ah… I’m so happy…”" width="720" height="618" style="display:block;width:100%;max-width:560px;height:auto;margin:0 auto;border-radius:14px"><figcaption class="sub" style="font-size:12px;margin-top:8px">Screenshot from Phantasy Star Universe (© SEGA)</figcaption></figure><p class="sub" style="margin:0">Doc’s look is inspired by the video game Phantasy Star Universe, where a small robot lives in your room and manages and takes care of so many things for you.</p></div>
+<div class="card"><div class="num">FUN FACT</div><figure style="margin:10px 0 14px;text-align:center"><img src="phantasy-star-universe.webp" alt="Screenshot from Phantasy Star Universe: a small round red and white floating robot beside a player character in a spaceship room, saying “Ah… I’m so happy…”" width="720" height="618" style="display:block;width:100%;max-width:560px;height:auto;margin:0 auto;border-radius:14px"><figcaption class="sub" style="font-size:12px;margin-top:8px">Screenshot from Phantasy Star Universe (© SEGA)</figcaption></figure><p class="sub" style="margin:0">Doc’s look is inspired by the video game Phantasy Star Universe, where a small robot lives in your room and manages and takes care of so many things for you.</p></div>
 <h2 style="font-size:clamp(26px,4vw,38px);line-height:1.2;font-weight:500;text-align:center;margin:36px 0 18px;letter-spacing:-.4px">Thanks to Cloudflare backend…</h2>
 <div class="grid3">
 <div class="card"><div class="num">GROUNDING</div><p class="sub" style="margin:0">Tone, format and behaviour are set in the AI Search project, not in this page, which sends no system prompt of its own. Updating the source material or the prompt changes Doc instantly, with no change to the site.</p></div>
@@ -1380,4 +1412,29 @@ const h=(location.hash||'').slice(1);const h2=h==='breath'?'prac':h;if(T[h2]){co
 
 </script>
 
+<script>
+/* Desktop chat extras: New chat + copy reply */
+(function(){
+  var nb=document.getElementById('chatNew');
+  if(nb){nb.onclick=function(){
+    if(busy)return;
+    if(nb.dataset.c!=='1'){nb.dataset.c='1';nb.textContent='Clear this chat?';setTimeout(function(){nb.dataset.c='';nb.textContent='New chat'},3000);return}
+    try{localStorage.removeItem(HKEY)}catch(e){}
+    HIST.length=0;log.innerHTML='';nb.dataset.c='';nb.textContent='New chat';
+    var ch=document.getElementById('chips');if(ch)ch.classList.remove('gone');
+    say("Hi. I'm Doc. This is a safe, unhurried space.\n\nTell me how you're feeling, or just say **guide me** and we'll begin.");
+    inp.focus();
+  }}
+  log.addEventListener('mouseover',function(e){
+    var m=e.target.closest&&e.target.closest('.m.c');
+    if(!m||m.querySelector('.cp')||m.classList.contains('writing')||(m.textContent||'').length<40)return;
+    var b=document.createElement('button');b.type='button';b.className='cp';b.textContent='Copy';b.setAttribute('aria-label','Copy this reply');
+    b.onclick=function(ev){ev.stopPropagation();var c=m.cloneNode(true);var x=c.querySelector('.cp');if(x)x.remove();
+      var t=(c.innerText||c.textContent||'').trim();
+      (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Copied'}).catch(function(){b.textContent='Press Ctrl+C'});
+      setTimeout(function(){b.textContent='Copy'},1400)};
+    m.appendChild(b);
+  });
+})();
+</script>
 </body></html>
