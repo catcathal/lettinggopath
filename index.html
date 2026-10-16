@@ -961,6 +961,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 <section class="view" id="get">
 <div class="card" style="text-align:center">
 <h2 style="margin-top:0">App coming soon</h2>
+<p class="sub"><b>Accounts coming soon:</b> when I have access to other models with funding, Doc will do exactly the same thing, but the user will be able to use it as much as they want, with long-term memory and personalization.</p>
 <p class="sub">We’re building a dedicated app to make daily practice easier: private, offline-friendly and free at its core.</p>
 <ul class="get-list">
 <li><b>Doc on the go</b> — the same gentle companion, in your pocket</li>
@@ -977,7 +978,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 
 <div class="sec">Who is this for?</div>
 <div class="card">
-<p style="margin:0">We live in a busy world full of distraction. Friendly reminders of the essentials of the path out of unhappiness help you remember, reflect and let the core principles sink in, again and again.</p>
+<p style="margin:0"><b>People who are looking at screens a lot:</b> We live in a busy world full of distraction, its so easy to swipe and scroll and waste so much time. Friendly reminders of the essentials of the path out of unhappiness help you remember, reflect and let the core principles sink in, again and again so you can remember you are precious, your time is precious, your well being is precious.</p>
 </div>
 <div class="grid3">
 <div class="card"><div class="num">ANCIENT WISDOM</div><p class="sub" style="margin:0">Letting go is a well-trodden path. Sometimes it is taught at length, in carefully distinguished steps and factors, and sometimes as simple advice in parables. The essence is the same.</p></div>
@@ -988,7 +989,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 <div class="card" style="text-align:center">
 <img class="hi" src="doc.webp" alt="Doc, a friendly round white and red companion robot with glowing blue eyes" width="120" height="120" style="display:block;margin:0 auto;width:120px;height:120px;border-radius:26%;box-shadow:0 6px 18px rgba(0,0,0,.18)">
 <h2 style="margin:6px 0 4px">Doc</h2>
-<p class="sub" style="font-size:19px;color:var(--ink);margin:0"><i>Prompted and curated by an LLM to be a straightforward, honest, no-B.S. guide back to the path (with a hint of kindness…)</i></p>
+<p class="sub" style="font-size:19px;color:var(--ink);margin:0"><i>Kind but powerful answers -- Doc is prompted to stay away from bias and generalization and to pull from documents rooted in evidence based practices that serve the purpose of one thing: freedom and peace.</i></p>
 </div>
 <div class="card">
 <p>Doc is an AI letting go companion (not quite R2-D2 yet).</p>
@@ -1579,9 +1580,9 @@ const h=(location.hash||'').slice(1);const h2=h==='breath'?'prac':h;if(T[h2]){co
 })();
 </script>
 <style>
-#wb{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(20,30,38,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#wb{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(20,30,38,.28);pointer-events:none}
 #wb[hidden]{display:none}
-#wb .wbc{width:100%;max-width:460px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:24px;padding:26px 22px 20px;box-shadow:0 18px 60px rgba(0,0,0,.25);text-align:center;animation:wbIn .35s ease both}
+#wb .wbc{pointer-events:auto;width:100%;max-width:460px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:24px;padding:26px 22px 20px;box-shadow:0 18px 60px rgba(0,0,0,.25);text-align:center;animation:wbIn .35s ease both}
 #wb h2{font:400 28px/1.2 Georgia,'Times New Roman',serif;margin:0 0 6px;color:var(--ink)}
 #wb p{margin:0 0 14px;font-family:system-ui,sans-serif;font-size:15px;color:var(--mute)}
 #wbText{width:100%;box-sizing:border-box;min-height:96px;resize:vertical;padding:12px 14px;font:16px/1.45 system-ui,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:14px}
@@ -1593,7 +1594,7 @@ const h=(location.hash||'').slice(1);const h2=h==='breath'?'prac':h;if(T[h2]){co
 @keyframes wbIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){#wb .wbc{animation:none}}
 </style>
-<div id="wb" hidden role="dialog" aria-modal="true" aria-labelledby="wbTitle">
+<div id="wb" hidden role="dialog" aria-modal="false" aria-labelledby="wbTitle">
 <div class="wbc">
 <h2 id="wbTitle">What's on your mind today, friend?</h2>
 <p>Doc is here whenever you're ready. There's no right answer.</p>
@@ -1615,7 +1616,7 @@ function send(){const t=ta.value.trim();if(!t)return;close();const tab=document.
 ta.addEventListener('input',()=>{go.disabled=!ta.value.trim()});
 ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}});
 go.onclick=send;skip.onclick=close;
-wb.addEventListener('click',e=>{if(e.target===wb)close()});
+document.addEventListener('pointerdown',e=>{if(!wb.hidden&&!e.target.closest('.wbc'))close()},true);
 wb.addEventListener('keydown',e=>{
  if(e.key==='Escape'){e.preventDefault();close();return}
  if(e.key==='Tab'){const f=[ta,go.disabled?null:go,skip].filter(Boolean);const i=f.indexOf(document.activeElement);
