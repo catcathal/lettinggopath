@@ -602,7 +602,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 </svg></div>
   <div class="hero-badge">Free · No sign-up · Not therapy</div>
   <h1>Let go of what’s weighing you down</h1>
-  <p class="lead">A fun AI companion to remind one of the immediate and long term benefit of practicing ‘letting go’, not a replacement for the invaluable experience of a real mentor or wise friend.</p>
+  <p class="lead" style="color:var(--ink);max-width:46ch;margin-bottom:12px">Talk with Sid for pointers rooted in ancient wisdom and practical guidance to release negative thoughts and emotions, and follow the <a href="#prac" id="heroPath" style="color:var(--acc);text-decoration:none;font-weight:600">ancient wisdom path of letting go</a>.</p>
   <div class="hero-cta">
     <button type="button" class="primary pulse" id="heroTalk">Talk to Sid</button>
     <span style="margin:-4px 0 0;font:13px system-ui,sans-serif;color:var(--mute)">(not therapy)</span>
@@ -1206,6 +1206,8 @@ $('vid').onerror=showAv;$('vid').onended=showAv;
   }
   const ht=$('heroTalk');
   if(ht)ht.onclick=goTalk;
+  const hp=$('heroPath');
+  if(hp)hp.onclick=function(e){e.preventDefault();document.querySelector('[data-t=prac]').click();const v=$('prac'),t=document.querySelector('.tabs');window.scrollTo({top:Math.max(0,v.getBoundingClientRect().top+window.scrollY-t.offsetHeight-8),behavior:'smooth'})};
 })();
 
 
