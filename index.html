@@ -1061,7 +1061,7 @@ async function sendMessage(x,retry){
   console.error("Sid chat failed:",e);
   flushNow();
   if(out){HIST.push({role:'assistant',content:out})}
-  else{show();put(FAIL_MSG);flushNow();const rb=document.createElement('button');rb.className='retry';rb.type='button';rb.textContent='Try again';const fb=bubble;rb.onclick=()=>{fb.remove();sendMessage(x,true)};bubble.appendChild(rb)}
+  else{show();put(FAIL_MSG+' [debug: '+((e&&e.message)||e)+']');flushNow();const rb=document.createElement('button');rb.className='retry';rb.type='button';rb.textContent='Try again';const fb=bubble;rb.onclick=()=>{fb.remove();sendMessage(x,true)};bubble.appendChild(rb)}
   saveHist();
  }finally{
   busy=false;clearInterval(loadTimer);if(bubble)bubble.classList.remove('writing');if(!bubble)d.remove();$('avc').classList.remove('talk');
