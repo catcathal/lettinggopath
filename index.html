@@ -1192,9 +1192,10 @@ $('kSend').onclick=async()=>{
 
  let match=null, usedFallback=false, matchFrom='';
  try{
-  const {data,error}=await sb.rpc('send_kindness',{p_message:raw,p_tag:'Traveler #'+myTravelerNum()});
+  const {data,error}=await sb.rpc('send_and_match_kindness_message',{p_message:raw,p_sender_tag:myTravelerNum()});
   if(error) throw error;
-  if(data&&data.length){match=data[0].out_message;matchFrom=data[0].out_tag||'a fellow traveler'}
+  const result=Array.isArray(data)?data[0]:data;
+  if(result&&result.matched&&result.incoming_message){match=result.incoming_message;matchFrom='a fellow traveler'}
  }catch(e){
   const msg=(e&&e.message)||'';
   const map={blocked:'Please keep it kind.',links_not_allowed:'Please leave out links.',rate_limited:'Please wait a little before sending more.',bad_length:'Please keep it between 3 and 220 characters.'};
@@ -1204,9 +1205,10 @@ $('kSend').onclick=async()=>{
    $('kSend').disabled=false;$('kSend').textContent='Send it into the world';
    $('kErr').textContent=map[key];return;
   }
-  console.error('Sharing send failed:',msg||e);
-  match=FALLBACK[Math.floor(Math.random()*FALLBACK.length)];
-  usedFallback=true;
+  console.error('Sharing send failed:',e);
+  $('kWait').style.display='none';$('kBox').style.display='block';
+  $('kSend').disabled=false;$('kSend').textContent='Send it into the world';
+  $('kErr').textContent="Sorry, that didn't go through. Your words are still here. Please try again in a moment.";return;
  }
 
  sendCount++;try{localStorage.setItem('kindSentCount',String(sendCount))}catch(e){}
