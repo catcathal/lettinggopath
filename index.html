@@ -39,6 +39,12 @@ p{margin:0 0 10px}.sub{color:var(--mute);font-family:system-ui,sans-serif;font-s
 .card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
 button{font:600 15px system-ui,sans-serif;border:0;border-radius:999px;padding:10px 16px;background:var(--acc);color:#fff;cursor:pointer}
 button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.tog .chev{display:inline-block;transition:transform .2s}
+.tog[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.more{display:flex;flex-direction:column;gap:14px}
+.more[hidden]{display:none!important}
+.more>.card{margin:0}
+
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
 .view{display:none}.view.on{display:block}
 .er{animation:erc 12.7s infinite}.ea{opacity:0;animation:eac 12.7s infinite}
@@ -443,7 +449,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
   .tabs button{font-size:15px;padding:12px 18px}
   #prac.view.on{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;align-items:start}
   #prac>.card{margin:0}
-  #prac>.sec,#prac>p,#prac>#faq,#prac>#bwCard{grid-column:1/-1}
+  #prac>.sec,#prac>p,#prac>#faq,#prac>#bwCard,#prac>.more{grid-column:1/-1}
   #kind,#give,#get,#about{max-width:760px;margin-left:auto;margin-right:auto}
   .grid3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
   main>.card>p{max-width:95ch}
@@ -614,7 +620,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
   </div>
 </div>
 
-<nav class="tabs" aria-label="Letting go sections"><button class="on" data-t="coach">Sid</button><button data-t="prac">Path</button><button data-t="kind">Share</button><button data-t="give">Give</button><button data-t="get">App</button><button data-t="about">About</button></nav>
+<nav class="tabs" aria-label="Letting go sections"><button class="on" data-t="coach">Sid</button><button data-t="prac">Path</button><button data-t="kind">Sharing</button><button data-t="give">Give</button><button data-t="get">App</button><button data-t="about">About</button></nav>
 
 <section class="view on" id="coach">
 <div class="card" id="avc"><button type="button" id="docX" aria-label="Put Sid to sleep" title="Put Sid to sleep"><svg viewBox="0 0 100 100" aria-hidden="true"><g transform="rotate(-22 36 24)"><path d="M28 28C25 10 32 3 38 6C44 9 44 22 42 30Z" fill="#d9372e"/></g><g transform="rotate(22 64 24)"><path d="M72 28C75 10 68 3 62 6C56 9 56 22 58 30Z" fill="#d9372e"/></g><ellipse cx="11" cy="58" rx="8" ry="15" fill="#d9372e"/><ellipse cx="89" cy="58" rx="8" ry="15" fill="#d9372e"/><circle cx="50" cy="58" r="38" fill="#fbf6ee" stroke="#d9372e" stroke-width="4"/><path d="M13 66Q50 56 87 66A38 38 0 0 1 13 66Z" fill="#f2877b"/><path d="M30 50Q36 55 42 50M58 50Q64 55 70 50" fill="none" stroke="#33c6ea" stroke-width="3.5" stroke-linecap="round"/><circle cx="26" cy="58" r="3.5" fill="#f4a7a0" opacity=".8"/><circle cx="74" cy="58" r="3.5" fill="#f4a7a0" opacity=".8"/></svg></button><button type="button" class="chat-x" id="chatX" aria-label="Close chat">&times;</button>
@@ -662,8 +668,8 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 
 <section class="view" id="kind">
 <div class="card" style="text-align:center" id="kIntro">
-<h2 style="margin-top:0">A mystery kindness</h2>
-<p class="sub">Many other people are going through something similar. Send one a friendly message of goodwill and see what a stranger sends back.</p>
+<h2 style="margin-top:0">Sharing</h2>
+<p class="sub">Share your hidden side with the world, safely and anonymously. Wish a stranger well on their journey, or (but please don’t) send some memes.</p>
 <button id="kStart">Share a kind message</button>
 </div>
 <div class="card" id="kBox" style="display:none">
@@ -679,7 +685,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 <p id="kBan" style="display:none;font-size:12px;font-style:italic;color:var(--mute);margin:4px 0 0;text-align:center"></p>
 </div>
 <div class="card" id="kWait" style="display:none;text-align:center">
-<p class="sub" id="kWaitTxt" style="margin:0">Sending your kindness into the world</p>
+<p class="sub" id="kWaitTxt" style="margin:0">Sending your words into the world</p>
 <div class="kdots"><i></i><i></i><i></i></div>
 </div>
 <div class="card" id="kMatch" style="display:none;text-align:center">
@@ -701,7 +707,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 
 <section class="view" id="prac">
 <div class="card">
-<h2 style="margin-top:0">What the path is</h2>
+<h2 style="margin-top:0;text-align:center">Mental development for letting go of past negativity</h2>
 <div class="nb" id="neuralBrain">
 <style>
 .nb{margin:0 0 12px;border-radius:24px;overflow:hidden;background:radial-gradient(120% 90% at 50% 20%,#232d6e 0%,#121a47 55%,#0a0f2a 100%);padding:14px 14px 18px;color:#d6defc;text-align:center}
@@ -743,6 +749,10 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 </svg>
 <p class="cap">Walk the same path again and again, and the connection grows <b>stronger</b>. That is how a new habit of mind is formed.</p>
 </div>
+<div style="text-align:center;margin-top:14px"><button type="button" class="tog" id="pathBtn" aria-expanded="false" aria-controls="pathMore">Read about the Path <span class="chev" aria-hidden="true">▾</span></button></div>
+</div>
+<div class="more" id="pathMore" hidden>
+<div class="card">
 <p class="sub" style="font-size:17px;line-height:1.55;color:var(--ink)">The path is mental development. (The word “meditation” is often used here, but “mental development” is the more accurate translation.) It works a lot like the neural pathways in your brain: the thoughts and reactions you repeat become well-worn grooves, and the more you follow them, the easier they are to follow again.</p>
 <p class="sub" style="font-size:17px;line-height:1.55;color:var(--ink)">Some of those pathways don’t serve you: worry, resentment, self-blame, the constant wanting. Others do: kindness, honesty, patience, clarity. Walking the path means gradually abandoning the unhelpful ones and cultivating the helpful ones, for long-term happiness.</p>
 <p class="sub" style="font-size:17px;line-height:1.55;color:var(--ink);margin-bottom:0">Neuroscience calls the underlying idea neuroplasticity: what you repeatedly practise tends to grow stronger. It’s an analogy, not a brain scan, but it explains why small, steady steps matter more than dramatic effort.</p>
@@ -808,10 +818,12 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 <p class="sub" style="font-size:17px;line-height:1.55;color:var(--ink);margin-bottom:0">The path really begins when you can keep your commitment to living in line with what is true, whatever is happening around you. At first, outer conditions may bring maturity, stability and confidence. The real test is when that confidence is so settled that you no longer fear the outside world, because what you know to be true matters more than convention and worldly opinion.</p>
 </div>
 <div class="card" id="faq"><h2 style="margin-top:0">Letting go: common questions</h2><h3 style="font-size:17px;margin:16px 0 4px">What is the path?</h3><p>The path is mental development. It works like the neural pathways in your brain: the habits of thought and reaction you repeat get stronger. Walking the path means gradually abandoning the unhelpful pathways and cultivating the helpful ones, such as kindness, honesty and patience, for long-term happiness.</p><h3 style="font-size:17px;margin:16px 0 4px">What is letting go?</h3><p>Letting go is an old path toward inner freedom. It means loosening three habits: craving, resistance and false identification (treating “my story” or “my pain” as the whole of who you are). When you stop feeding the habit of holding on, the heart settles.</p><h3 style="font-size:17px;margin:16px 0 4px">Is letting go the same as suppressing my feelings or giving up?</h3><p>No. It isn’t suppression, and it isn’t just watching. You feel what is here, build what is clear and kind, and loosen the grip of craving, resistance and false identification.</p><h3 style="font-size:17px;margin:16px 0 4px">What exactly am I letting go of?</h3><p>The old, automatic pathway of wanting, resisting and identifying. When fear, anger, grief or shame arises, it says hold tighter, push away or become the story. Letting go is choosing a different way, again and again.</p><h3 style="font-size:17px;margin:16px 0 4px">Is Sid free, and is it therapy?</h3><p>Sid is a free AI companion and needs no sign-up. It offers wellness support, not therapy or medical advice. If you may be in danger, call your local emergency number or a crisis line right away.</p><h3 style="font-size:17px;margin:16px 0 4px">How often should I practise letting go?</h3><p>Little and often works best. Keep it gentle and steady, and renew the choice to let go whenever something arises. Some periods call for more commitment, and that is fine.</p></div>
+</div>
 
-<div class="sec" id="bodyWork">Body work</div>
-<p class="sub" style="margin:-4px 0 14px;text-align:center">The same path, felt in the body. Tension can soften as the grip of craving, resistance and old stories relaxes.</p>
-<div class="card" style="text-align:center" id="bwCard">
+<div class="card" style="text-align:center" id="bodyWork">
+<h2 style="margin-top:0">Working with the body</h2>
+<p class="sub" style="margin:0 0 14px">The same path, felt in the body. Tension can soften as the grip of craving, resistance and old stories relaxes.</p>
+<div id="bwCard">
 <p style="font-size:17px;line-height:1.55;margin:0 0 14px;color:var(--ink)">Letting go can lighten the load in both body and mind. As the grip of a separate self loosens, tension can melt and fade, and both settle into the natural flow of things, at ease with what is.</p>
 <div class="bwWrap">
 <svg viewBox="0 0 200 200" width="190" height="190" role="img" aria-label="A human body outline filled with color, gently breathing, with color flowing from muted and dull to soft and vivid, on a continuous loop">
@@ -835,6 +847,9 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 </div>
 <p class="bwCap" style="margin:8px 0 0;font-size:14px">The warm reds stand for tension held in the body: the residue of craving, resistance and old stories. As you let go, they cool into calm blues, and the body softens and breathes freely again.</p>
 </div>
+<div style="text-align:center;margin-top:16px"><button type="button" class="tog" id="bodyBtn" aria-expanded="false" aria-controls="bodyMore">Body work <span class="chev" aria-hidden="true">▾</span></button></div>
+</div>
+<div class="more" id="bodyMore" hidden>
 
 <div class="card">
 <h2 style="margin-top:0">Hey… I have a body!</h2>
@@ -861,6 +876,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 <div class="card"><div class="num">SHAKING</div><p class="sub" style="margin:0">Letting the body tremble or shake gently to help release built-up stress.</p><p style="margin:10px 0 0"><a href="https://www.youtube.com/results?search_query=guided+shaking+meditation+tension+release" target="_blank" rel="noopener" style="color:var(--acc);font:600 14px system-ui,sans-serif;text-decoration:underline;text-underline-offset:3px">▶ Find a guided shaking practice</a></p></div>
 <div class="card"><div class="num">DANCING</div><p class="sub" style="margin:0">Free, expressive movement to release stored tension and emotion.</p><p style="margin:10px 0 0"><a href="https://www.youtube.com/results?search_query=guided+free+movement+dance+meditation" target="_blank" rel="noopener" style="color:var(--acc);font:600 14px system-ui,sans-serif;text-decoration:underline;text-underline-offset:3px">▶ Find a guided free-movement dance</a></p></div>
 <div class="card"><div class="num">HONESTY</div><p class="sub" style="margin:0">Stop suppressing what is real, starting with being honest with yourself. Holding back a truth takes energy; acknowledging it releases it.</p></div>
+</div>
 </div>
 </div>
 
@@ -1122,7 +1138,7 @@ function askForget(){
 wireForget();
 document.querySelectorAll('[data-go]').forEach(el=>el.onclick=e=>{e.preventDefault();document.querySelector('[data-t='+el.dataset.go+']').click();window.scrollTo({top:0,behavior:'smooth'})});
 
-/* ---- Kindness tab: a shared, anonymous message pool (Supabase) ---- */
+/* ---- Sharing tab: a shared, anonymous message pool (Supabase) ---- */
 const SUPABASE_URL = "https://xxgbafhulhivlalqpixk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_xJoc51uMYdK6MlJsTOzaPA_hnc11WCh";
 (function(){
@@ -1172,7 +1188,7 @@ $('kSend').onclick=async()=>{
  $('kSend').disabled=true;$('kSend').textContent='Sending…';
  clearInterval(promptT);
  $('kBox').style.display='none';$('kWait').style.display='block';
- $('kWaitTxt').textContent=["Sending your kindness into the world","Looking for a fellow traveler","Almost there"][Math.floor(Math.random()*3)];
+ $('kWaitTxt').textContent=["Sending your words into the world","Looking for a fellow traveler","Almost there"][Math.floor(Math.random()*3)];
 
  let match=null, usedFallback=false, matchFrom='';
  try{
@@ -1188,7 +1204,7 @@ $('kSend').onclick=async()=>{
    $('kSend').disabled=false;$('kSend').textContent='Send it into the world';
    $('kErr').textContent=map[key];return;
   }
-  console.error('Kindness send failed:',msg||e);
+  console.error('Sharing send failed:',msg||e);
   match=FALLBACK[Math.floor(Math.random()*FALLBACK.length)];
   usedFallback=true;
  }
@@ -1202,7 +1218,7 @@ $('kSend').onclick=async()=>{
   $('kMatch').style.display='block';$('kMatch').classList.remove('show');void $('kMatch').offsetWidth;$('kMatch').classList.add('show');
   if(match){$('kMatchLabel').textContent=usedFallback?'A gentle word for you':'A fellow traveler sent you this';$('kMatchText').textContent='“'+match+'”';$('kMatchFrom').textContent=usedFallback?'':'— '+matchFrom}
   else{$('kMatchLabel').textContent='';$('kMatchText').textContent="You're the first one here right now. Your message is waiting — come back later to see if a fellow traveler has replied with kindness of their own.";$('kMatchFrom').textContent=''}
-  $('kCountLine').textContent=sendCount===1?"You've shared kindness here once.":"You've shared kindness here "+sendCount+" times.";
+  $('kCountLine').textContent=sendCount===1?"You've shared here once.":"You've shared here "+sendCount+" times.";
  },900);
 };
 $('kAgain').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.display='none';$('kBox').style.display='block';$('kMyNum').textContent='Traveler #'+myTravelerNum();clearInterval(promptT);promptT=setInterval(cyclePrompt,4000)};
@@ -1276,6 +1292,7 @@ document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener
 (function(){var a=document.getElementById('giveAv'),p=document.querySelector('#about img');if(a&&p&&p.src)a.src=p.src;else if(a)a.style.display='none'})();
 </script>
 <script>
+(function(){[['pathBtn','pathMore'],['bodyBtn','bodyMore']].forEach(function(a){var b=document.getElementById(a[0]),m=document.getElementById(a[1]);if(!b||!m)return;b.addEventListener('click',function(){var o=m.hasAttribute('hidden');if(o)m.removeAttribute('hidden');else m.setAttribute('hidden','');b.setAttribute('aria-expanded',o?'true':'false')})})})();
 document.getElementById('footContact').onclick=function(e){e.preventDefault();document.querySelector('[data-t=about]').click();setTimeout(function(){document.getElementById('contactCard').scrollIntoView({behavior:'smooth',block:'center'})},60)};
 
 
@@ -1407,10 +1424,10 @@ if(avatar){
 
 
 
-(function(){const T={coach:'Sid: Your Letting Go Companion',kind:'Kindness and Letting Go',prac:'The Path of Letting Go + Body Work',give:'Keep Letting Go Free',get:'Letting Go App',about:'About the Technique of Letting Go'};
+(function(){const T={coach:'Sid: Your Letting Go Companion',kind:'Sharing and Letting Go',prac:'The Path of Letting Go + Body Work',give:'Keep Letting Go Free',get:'Letting Go App',about:'About the Technique of Letting Go'};
 const base=document.title;
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{try{history.replaceState(null,'','#'+b.dataset.t);document.title=(T[b.dataset.t]||base)+' | Letting Go'}catch(e){}}));
-const h=(location.hash||'').slice(1);const h2=h==='breath'?'prac':h;if(T[h2]){const b=document.querySelector('.tabs [data-t="'+h2+'"]');b&&b.click();if(h==='breath')setTimeout(()=>{const el=document.getElementById('bodyWork');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},80)}})();
+const h=(location.hash||'').slice(1);const h2=h==='breath'?'prac':h;if(T[h2]){const b=document.querySelector('.tabs [data-t="'+h2+'"]');b&&b.click();if(h==='breath')setTimeout(()=>{const bb=document.getElementById('bodyBtn');if(bb&&bb.getAttribute('aria-expanded')!=='true')bb.click();const el=document.getElementById('bodyWork');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},80)}})();
 
 
 /* ---- put Sid to sleep -> he warps into a tiny ball; tap the ball to wake him ---- */
