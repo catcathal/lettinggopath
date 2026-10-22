@@ -1192,6 +1192,8 @@ $('kSend').onclick=async()=>{
 
  let match=null, usedFallback=false, matchFrom='';
  try{
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){const {error:authErr}=await sb.auth.signInAnonymously();if(authErr)throw authErr}
   const {data,error}=await sb.rpc('send_and_match_kindness_message',{p_message:raw,p_sender_tag:myTravelerNum()});
   if(error) throw error;
   const result=Array.isArray(data)?data[0]:data;
@@ -1208,7 +1210,9 @@ $('kSend').onclick=async()=>{
   console.error('Sharing send failed:',e);
   $('kWait').style.display='none';$('kBox').style.display='block';
   $('kSend').disabled=false;$('kSend').textContent='Send it into the world';
-  $('kErr').textContent="Sorry, that didn't go through. Your words are still here. Please try again in a moment.";return;
+  $('kErr').textContent="Sorry, that didn't go through. Your words are still here. Please try again in a moment.";
+  try{const d=[e&&e.code,e&&e.message,e&&e.details,e&&e.hint].filter(Boolean).join(' | ');if(d)$('kErr').textContent+=' [debug: '+d+']'}catch(_){}
+  return;
  }
 
  sendCount++;try{localStorage.setItem('kindSentCount',String(sendCount))}catch(e){}
