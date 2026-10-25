@@ -1273,7 +1273,7 @@ $('kDone').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.displ
 })();
 
 $('in').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();sendMessage($('in').value)}};
-if(!HIST.length)say("Hi. I'm Sid. This is a safe, unhurried space.\n\nTell me how you're feeling, or just say **guide me** and we'll begin.");
+if(!HIST.length)say("Hi friend, if you tell me what's on your mind I **might** be able to give you a pointer in the right direction.");
 
 const PATREON_URL="";/* paste your Patreon page link here */
 const DONATE_URL="https://paypal.me/freedomfromtraumaapp";
@@ -1552,7 +1552,7 @@ const h=(location.hash||'').slice(1);const h2=h==='breath'?'prac':h;if(T[h2]){co
     try{localStorage.removeItem(HKEY)}catch(e){}
     HIST.length=0;log.innerHTML='';nb.dataset.c='';nb.textContent='New chat';
     var ch=document.getElementById('chips');if(ch)ch.classList.remove('gone');
-    say("Hi. I'm Sid. This is a safe, unhurried space.\n\nTell me how you're feeling, or just say **guide me** and we'll begin.");
+    say("Hi friend, if you tell me what's on your mind I **might** be able to give you a pointer in the right direction.");
     inp.focus();
   }}
   log.addEventListener('mouseover',function(e){
