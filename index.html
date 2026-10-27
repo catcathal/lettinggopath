@@ -479,6 +479,9 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
   main>.card[style*="text-align:center"]>p{margin-left:auto;margin-right:auto}
 }
 
+/* ===== Chat bubbles with Sid's avatar (all screen sizes) ===== */
+html.chatmode #avc.chat .m.c{position:relative;margin-left:42px;max-width:calc(100% - 50px);border-top-left-radius:5px}
+html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-40px;top:0;width:30px;height:30px;border-radius:50%;background:url(favicon-64.png) center/cover;box-shadow:0 0 0 1px var(--line)}
 /* ===== Desktop chat: centred full-screen app layout ===== */
 #chatHead,#chatFoot{display:none}
 @media (min-width:900px){
@@ -502,7 +505,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
   html.chatmode #avc.chat .m{max-width:82%;padding:14px 18px}
   html.chatmode #avc.chat .m.u{width:fit-content;margin-left:auto;max-width:75%}
   html.chatmode #avc.chat .m.c{position:relative;margin-left:46px;background:var(--card);border:1px solid var(--line);border-top-left-radius:6px}
-  html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-46px;top:0;width:34px;height:34px;border-radius:10px;background:url(doc.webp) center/cover;box-shadow:0 0 0 1px var(--line)}
+  html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-46px;top:0;width:34px;height:34px;border-radius:50%;background:url(favicon-64.png) center/cover;box-shadow:0 0 0 1px var(--line)}
   html.chatmode #avc.chat .m.c .cp{position:absolute;top:8px;right:10px;opacity:0;transition:opacity .15s;font:600 12px system-ui,sans-serif;padding:4px 10px;border-radius:999px;background:var(--bg);color:var(--mute);border:1px solid var(--line)}
   html.chatmode #avc.chat .m.c:hover .cp,html.chatmode #avc.chat .m.c .cp:focus-visible{opacity:1}
   html.chatmode #avc.chat .composer{margin-top:6px;margin-bottom:6px;padding:8px 8px 8px 22px;border-radius:22px;box-shadow:0 8px 30px rgba(0,0,0,.10)}
