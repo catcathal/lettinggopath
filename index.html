@@ -486,6 +486,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
   #avc.chat{padding:64px 24px 0;align-items:stretch}
   #avc.chat #chatHead{display:block;position:absolute;left:0;right:0;top:0;height:64px;background:var(--card);border-bottom:1px solid var(--line);z-index:5}
   #chatHead .ch-in{max-width:860px;height:100%;margin:0 auto;display:flex;align-items:center;gap:12px;padding:0 60px 0 62px}
+  #chatHead .ch-av{width:36px;height:36px;border-radius:50%;object-fit:cover;flex:none;border:1px solid var(--line)}
   #chatHead .ch-t{display:flex;flex-direction:column;line-height:1.25}
   #chatHead .ch-t b{font:600 17px system-ui,sans-serif;color:var(--ink)}
   #chatHead .ch-t span{font:13px system-ui,sans-serif;color:var(--mute)}
@@ -647,7 +648,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
 
 <section class="view on" id="coach">
 <div class="card" id="avc"><button type="button" id="docX" aria-label="Put Sid to sleep" title="Put Sid to sleep"><svg viewBox="0 0 100 100" aria-hidden="true"><g transform="rotate(-22 36 24)"><path d="M28 28C25 10 32 3 38 6C44 9 44 22 42 30Z" fill="#d9372e"/></g><g transform="rotate(22 64 24)"><path d="M72 28C75 10 68 3 62 6C56 9 56 22 58 30Z" fill="#d9372e"/></g><ellipse cx="11" cy="58" rx="8" ry="15" fill="#d9372e"/><ellipse cx="89" cy="58" rx="8" ry="15" fill="#d9372e"/><circle cx="50" cy="58" r="38" fill="#fbf6ee" stroke="#d9372e" stroke-width="4"/><path d="M13 66Q50 56 87 66A38 38 0 0 1 13 66Z" fill="#f2877b"/><path d="M30 50Q36 55 42 50M58 50Q64 55 70 50" fill="none" stroke="#33c6ea" stroke-width="3.5" stroke-linecap="round"/><circle cx="26" cy="58" r="3.5" fill="#f4a7a0" opacity=".8"/><circle cx="74" cy="58" r="3.5" fill="#f4a7a0" opacity=".8"/></svg></button><button type="button" class="chat-x" id="chatX" aria-label="Close chat">&times;</button>
-<div id="chatHead"><div class="ch-in"><div class="ch-t"><b>Sid</b><span>Your letting-go companion</span></div><button type="button" id="chatNew" class="ghost">New chat</button></div></div>
+<div id="chatHead"><div class="ch-in"><img class="ch-av" src="/favicon-64.png" alt="" width="36" height="36"><div class="ch-t"><b>Sid</b><span>Your letting-go companion</span></div><button type="button" id="chatNew" class="ghost">New chat</button></div></div>
 <div id="stage"><video id="vid" playsinline controls preload="none"></video></div>
 <svg id="av" viewBox="0 0 200 220" role="img" aria-label="Sid, a friendly round white companion robot with red ears and glowing cyan eyes"><defs>
 <radialGradient id="dbody" cx=".34" cy=".26" r=".9"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#f6f0e8"/><stop offset=".9" stop-color="#dcd2c7"/><stop offset="1" stop-color="#c2b5a8"/></radialGradient>
@@ -1089,7 +1090,7 @@ addEventListener('orientationchange',()=>setTimeout(fitChat,300));
 /* tapping the input (or anywhere on the composer bar) opens the chat and focuses the box */
 inp.addEventListener('focus',()=>{enterChat();setTimeout(fitChat,300)});
 document.querySelector('.composer').addEventListener('pointerdown',e=>{if(e.target.closest('#send'))return;if(e.target!==inp){e.preventDefault();inp.focus()}});
-const LOADING_MSGS=["Sid is thinking hard"];
+const LOADING_MSGS=["Sid is thinking"];
 let loadTimer;
 const FAIL_MSG="I'm having trouble connecting right now. Please try again in a moment. If you're in crisis, please contact your local emergency number or a crisis line (findahelpline.com).";
 let busy=false;
