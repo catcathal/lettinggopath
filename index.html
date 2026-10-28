@@ -1549,6 +1549,24 @@ const h=(location.hash||'').slice(1);const h2=h==='breath'?'prac':h;if(T[h2]){co
 <script>
 /* Desktop chat extras: New chat + copy reply */
 (function(){
+  /* Turns a rendered reply back into plain text, keeping paragraphs, line breaks and numbered / bulleted lists. */
+  function replyText(el){
+    var blocks=[];
+    function inline(n){return (n.textContent||'').replace(/\s+/g,' ').trim()}
+    Array.prototype.forEach.call(el.childNodes,function(n){
+      if(n.nodeType===3){var t=n.textContent.replace(/\s+/g,' ').trim();if(t)blocks.push(t);return}
+      if(n.nodeType!==1||n.classList.contains('cp'))return;
+      var tag=n.tagName;
+      if(tag==='UL'||tag==='OL'){
+        var i=0,lines=[];
+        Array.prototype.forEach.call(n.children,function(li){if(li.tagName!=='LI')return;i++;lines.push((tag==='OL'?i+'. ':'- ')+inline(li))});
+        if(lines.length)blocks.push(lines.join('\n'));
+      }else{
+        var t2=inline(n);if(t2)blocks.push(t2);
+      }
+    });
+    return blocks.join('\n\n').trim();
+  }
   var nb=document.getElementById('chatNew');
   if(nb){nb.onclick=function(){
     if(busy)return;
@@ -1563,8 +1581,8 @@ const h=(location.hash||'').slice(1);const h2=h==='breath'?'prac':h;if(T[h2]){co
     var m=e.target.closest&&e.target.closest('.m.c');
     if(!m||m.querySelector('.cp')||m.classList.contains('writing')||(m.textContent||'').length<40)return;
     var b=document.createElement('button');b.type='button';b.className='cp';b.textContent='Copy';b.setAttribute('aria-label','Copy this reply');
-    b.onclick=function(ev){ev.stopPropagation();var c=m.cloneNode(true);var x=c.querySelector('.cp');if(x)x.remove();
-      var t=(c.innerText||c.textContent||'').trim();
+    b.onclick=function(ev){ev.stopPropagation();
+      var t=replyText(m);
       (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Copied'}).catch(function(){b.textContent='Press Ctrl+C'});
       setTimeout(function(){b.textContent='Copy'},1400)};
     m.appendChild(b);
