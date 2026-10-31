@@ -5,6 +5,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
 <meta name="description" content="A free, gentle guide to mental development: let go of habits that bring worry and self-blame, and cultivate those that bring lasting happiness. With Sid, a kind AI companion. Wellness support, not therapy.">
 <meta name="theme-color" content="#4a7d8a" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141a20" media="(prefers-color-scheme: dark)">
@@ -479,6 +480,7 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
   main>.card[style*="text-align:center"]>p{margin-left:auto;margin-right:auto}
 }
 
+#pushHour{font:inherit;padding:7px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
 /* ===== Chat bubbles with Sid's avatar (all screen sizes) ===== */
 html.chatmode #avc.chat .m.c{position:relative;margin-left:42px;max-width:calc(100% - 50px);border-top-left-radius:5px}
 html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-40px;top:0;width:30px;height:30px;border-radius:50%;background:url(favicon-64.png) center/cover;box-shadow:0 0 0 1px var(--line)}
@@ -724,6 +726,7 @@ html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-40px;top
 <button class="ghost" id="kHeart" style="font-size:13px;padding:6px 14px">🤍 This helped</button>
 </div>
 <p class="sub" id="kCountLine" style="font-size:12px;margin-top:10px"></p>
+<p class="sub" style="font-size:12px;margin:4px 0 0"><a href="#" data-go="get" style="color:var(--acc)">🔔 Want a gentle daily reminder?</a></p>
 <div class="chips" style="justify-content:center;margin-top:14px">
 <button id="kAgain">Send another</button>
 <button class="ghost" id="kDone">I'm done for now</button>
@@ -969,6 +972,19 @@ html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-40px;top
 <button type="button" data-go="give">Support the project</button>
 <button type="button" class="ghost" data-go="about">Contact the maker</button>
 </div>
+</div>
+<div class="card" id="pushCard" style="text-align:center;display:none">
+<h2 style="margin-top:0">A gentle daily reminder</h2>
+<p class="sub">One short, calm note a day. No app and no account. Turn it off any time.</p>
+<p class="sub" id="pushIos" style="display:none"><b>On iPhone:</b> tap the Share button, choose <b>Add to Home Screen</b>, then open Letting Go from that icon and come back to this page.</p>
+<div id="pushCtl">
+<p class="sub" style="margin:6px 0"><label for="pushHour">Time each day </label><select id="pushHour" aria-label="Reminder time"></select></p>
+<div class="chips" style="justify-content:center">
+<button type="button" id="pushOn">Remind me daily</button>
+<button type="button" class="ghost" id="pushOff" style="display:none">Turn off reminders</button>
+</div>
+</div>
+<p class="sub" id="pushMsg" style="min-height:1em;font-size:13px"></p>
 </div>
 </section>
 
@@ -1274,6 +1290,66 @@ $('kSend').onclick=async()=>{
 };
 $('kAgain').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.display='none';$('kBox').style.display='block';$('kMyNum').textContent='Traveler #'+myTravelerNum();clearInterval(promptT);promptT=setInterval(cyclePrompt,4000)};
 $('kDone').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.display='block'};
+})();
+
+
+/* ---- Optional daily reminder (web push) ---- */
+(function(){
+ const card=$('pushCard');if(!card)return;
+ const ua=navigator.userAgent||'';
+ const isIOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ const standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+ const supported=('serviceWorker' in navigator)&&('PushManager' in window)&&('Notification' in window);
+ const hourSel=$('pushHour'),msg=$('pushMsg'),on=$('pushOn'),off=$('pushOff');
+ for(let h=0;h<24;h++){const o=document.createElement('option');o.value=h;o.textContent=(h%12||12)+':00 '+(h<12?'AM':'PM');hourSel.appendChild(o)}
+ let saved=null;try{saved=localStorage.getItem('pushHour')}catch(e){}
+ hourSel.value=saved!==null&&saved!==''?saved:'9';
+ card.style.display='block';
+ const sb=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false}}):null;
+ const say=t=>{msg.textContent=t};
+ const ui=isOn=>{on.style.display=isOn?'none':'';off.style.display=isOn?'':'none'};
+ function b64(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const r=atob(s),a=new Uint8Array(r.length);for(let i=0;i<r.length;i++)a[i]=r.charCodeAt(i);return a}
+ if(!supported){
+  if(isIOS&&!standalone){$('pushIos').style.display='block';$('pushCtl').style.display='none'}
+  else{$('pushCtl').style.display='none';say("Reminders aren't available in this browser.")}
+  return;
+ }
+ if(!sb){$('pushCtl').style.display='none';say("Reminders couldn't connect just now. Please reload.");return}
+ async function save(sub){
+  const j=sub.toJSON();
+  const {error}=await sb.rpc('save_push_subscription',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_hour:parseInt(hourSel.value,10),p_tz:Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'});
+  if(error)throw error;
+  try{localStorage.setItem('pushHour',hourSel.value)}catch(e){}
+ }
+ navigator.serviceWorker.getRegistration('/').then(r=>r&&r.pushManager.getSubscription()).then(sub=>{if(sub&&Notification.permission==='granted')ui(true)}).catch(()=>{});
+ on.onclick=async()=>{
+  on.disabled=true;say('');
+  try{
+   const perm=await Notification.requestPermission();
+   if(perm!=='granted'){say("Notifications are blocked for this site. You can allow them in your browser's site settings, then try again.");return}
+   const reg=await navigator.serviceWorker.register('/sw.js');await navigator.serviceWorker.ready;
+   const {data:key,error:ke}=await sb.rpc('get_push_public_key');
+   if(ke||!key)throw ke||new Error('no key');
+   let sub=await reg.pushManager.getSubscription();
+   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64(key)});
+   await save(sub);
+   ui(true);say('Done. You will get one gentle reminder a day around '+hourSel.options[hourSel.selectedIndex].textContent+'.');
+  }catch(e){console.error('Reminder setup failed:',e);say("Sorry, that didn't work. Please try again in a moment.")}
+  finally{on.disabled=false}
+ };
+ off.onclick=async()=>{
+  off.disabled=true;
+  try{
+   const reg=await navigator.serviceWorker.getRegistration('/');const sub=reg&&await reg.pushManager.getSubscription();
+   if(sub){const ep=sub.endpoint;await sub.unsubscribe();await sb.rpc('remove_push_subscription',{p_endpoint:ep})}
+   ui(false);say('Reminders are off.');
+  }catch(e){console.error(e);say("Couldn't turn that off just now. Please try again.")}
+  finally{off.disabled=false}
+ };
+ hourSel.onchange=async()=>{
+  if(off.style.display==='none')return;
+  try{const reg=await navigator.serviceWorker.getRegistration('/');const sub=reg&&await reg.pushManager.getSubscription();if(sub){await save(sub);say('Time updated to '+hourSel.options[hourSel.selectedIndex].textContent+'.')}}catch(e){say("Couldn't update the time. Please try again.")}
+ };
 })();
 
 $('in').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();sendMessage($('in').value)}};
