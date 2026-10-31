@@ -1300,6 +1300,7 @@ $('kDone').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.displ
  const isIOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
  const standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
  const supported=('serviceWorker' in navigator)&&('PushManager' in window)&&('Notification' in window);
+ window.dailyReminderSupported=supported;
  const hourSel=$('pushHour'),msg=$('pushMsg'),on=$('pushOn'),off=$('pushOff');
  for(let h=0;h<24;h++){const o=document.createElement('option');o.value=h;o.textContent=(h%12||12)+':00 '+(h<12?'AM':'PM');hourSel.appendChild(o)}
  let saved=null;try{saved=localStorage.getItem('pushHour')}catch(e){}
@@ -1307,7 +1308,7 @@ $('kDone').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.displ
  card.style.display='block';
  const sb=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false}}):null;
  const say=t=>{msg.textContent=t};
- const ui=isOn=>{on.style.display=isOn?'none':'';off.style.display=isOn?'':'none'};
+ const ui=isOn=>{on.style.display=isOn?'none':'';off.style.display=isOn?'':'none';try{localStorage.setItem('pushOn',isOn?'1':'0')}catch(e){}};
  function b64(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const r=atob(s),a=new Uint8Array(r.length);for(let i=0;i<r.length;i++)a[i]=r.charCodeAt(i);return a}
  if(!supported){
   if(isIOS&&!standalone){$('pushIos').style.display='block';$('pushCtl').style.display='none'}
@@ -1322,20 +1323,30 @@ $('kDone').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.displ
   try{localStorage.setItem('pushHour',hourSel.value)}catch(e){}
  }
  navigator.serviceWorker.getRegistration('/').then(r=>r&&r.pushManager.getSubscription()).then(sub=>{if(sub&&Notification.permission==='granted')ui(true)}).catch(()=>{});
+ async function enable(){
+  const perm=await Notification.requestPermission();
+  if(perm!=='granted')return 'blocked';
+  const reg=await navigator.serviceWorker.register('/sw.js');await navigator.serviceWorker.ready;
+  const {data:key,error:ke}=await sb.rpc('get_push_public_key');
+  if(ke||!key)throw ke||new Error('no key');
+  let sub=await reg.pushManager.getSubscription();
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64(key)});
+  await save(sub);
+  ui(true);
+  return 'ok';
+ }
+ /* One-tap entry point used by the App tab and the welcome popup. Call it straight from a tap. */
+ window.enableDailyReminder=async function(hour){
+  if(hour!=null)hourSel.value=String(hour);
+  try{return await enable()}catch(e){console.error('Reminder setup failed:',e);return 'error'}
+ };
  on.onclick=async()=>{
   on.disabled=true;say('');
-  try{
-   const perm=await Notification.requestPermission();
-   if(perm!=='granted'){say("Notifications are blocked for this site. You can allow them in your browser's site settings, then try again.");return}
-   const reg=await navigator.serviceWorker.register('/sw.js');await navigator.serviceWorker.ready;
-   const {data:key,error:ke}=await sb.rpc('get_push_public_key');
-   if(ke||!key)throw ke||new Error('no key');
-   let sub=await reg.pushManager.getSubscription();
-   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64(key)});
-   await save(sub);
-   ui(true);say('Done. You will get one gentle reminder a day around '+hourSel.options[hourSel.selectedIndex].textContent+'.');
-  }catch(e){console.error('Reminder setup failed:',e);say("Sorry, that didn't work. Please try again in a moment.")}
-  finally{on.disabled=false}
+  const r=await window.enableDailyReminder();
+  if(r==='ok')say('Done. You will get one gentle reminder a day around '+hourSel.options[hourSel.selectedIndex].textContent+'.');
+  else if(r==='blocked')say("Notifications are blocked for this site. You can allow them in your browser's site settings, then try again.");
+  else say("Sorry, that didn't work. Please try again in a moment.");
+  on.disabled=false;
  };
  off.onclick=async()=>{
   off.disabled=true;
@@ -1677,6 +1688,11 @@ const h=(location.hash||'').slice(1);const h2=h==='breath'?'prac':h;if(T[h2]){co
 #wbGo{min-height:44px;padding:0 22px;font:600 16px system-ui,sans-serif;color:var(--bg);background:var(--acc);border:0;border-radius:999px;cursor:pointer}
 #wbGo:disabled{opacity:.45;cursor:default}
 #wbSkip{min-height:44px;padding:0 14px;font:15px system-ui,sans-serif;color:var(--mute);background:none;border:0;text-decoration:underline;cursor:pointer}
+#wbRemind{display:flex;gap:10px;align-items:flex-start;justify-content:center;margin:16px auto 0;max-width:360px;font:14px/1.4 system-ui,sans-serif;color:var(--ink);text-align:left;cursor:pointer}
+#wbRemind[hidden]{display:none}
+#wbRemind input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--acc);cursor:pointer}
+#wbRemind small{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+#wb p#wbRemindMsg{margin:8px 0 0;font-size:13px;min-height:1em}
 @keyframes wbIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){#wb .wbc{animation:none}}
 </style>
@@ -1686,18 +1702,29 @@ const h=(location.hash||'').slice(1);const h2=h==='breath'?'prac':h;if(T[h2]){co
 <p>Sid is here whenever you're ready. There's no right answer.</p>
 <textarea id="wbText" maxlength="500" aria-label="What's on your mind today?" placeholder="Something heavy, something good, or just hello…"></textarea>
 <div class="wbr"><button type="button" id="wbGo" disabled>Talk to Sid</button><button type="button" id="wbSkip">Not now</button></div>
+<label id="wbRemind" hidden><input type="checkbox" id="wbRemindBox"><span>🔔 Also send me one gentle reminder a day <small>(9 AM by default. You can change it in the App tab.)</small></span></label>
+<p id="wbRemindMsg" aria-live="polite"></p>
 </div>
 </div>
 <script>
 (function(){
-const KEY='fftLastVisit',GAP=6*60*60*1000,wb=document.getElementById('wb'),ta=document.getElementById('wbText'),go=document.getElementById('wbGo'),skip=document.getElementById('wbSkip');
+const KEY='fftLastVisit',GAP=6*60*60*1000,wb=document.getElementById('wb'),ta=document.getElementById('wbText'),go=document.getElementById('wbGo'),skip=document.getElementById('wbSkip'),rm=document.getElementById('wbRemind'),rb=document.getElementById('wbRemindBox'),rmsg=document.getElementById('wbRemindMsg');
 let last=0,seen=false,opener=null;
 try{last=parseInt(localStorage.getItem(KEY)||'0',10)||0}catch(e){}
 try{seen=sessionStorage.getItem('fftWelcomeShown')==='1'}catch(e){}
 const stamp=()=>{try{localStorage.setItem(KEY,String(Date.now()))}catch(e){}};
 stamp();addEventListener('pagehide',stamp);
 function close(){wb.hidden=true;try{sessionStorage.setItem('fftWelcomeShown','1')}catch(e){}if(opener&&opener.focus)try{opener.focus({preventScroll:true})}catch(e){}}
-function open(){opener=document.activeElement;wb.hidden=false;ta.focus()}
+function showRemind(){let on='0';try{on=localStorage.getItem('pushOn')||'0'}catch(e){}if(window.dailyReminderSupported&&on!=='1'&&typeof window.enableDailyReminder==='function')rm.hidden=false}
+function open(){opener=document.activeElement;showRemind();wb.hidden=false;ta.focus()}
+rb.addEventListener('change',async()=>{
+ if(!rb.checked)return;
+ rb.disabled=true;rmsg.style.color='var(--mute)';rmsg.textContent='Your browser will ask. Tap Allow.';
+ const r=await window.enableDailyReminder();
+ rb.disabled=false;
+ if(r==='ok'){rmsg.style.color='var(--acc)';rmsg.textContent='Done. Your first gentle reminder is on its way.'}
+ else{rb.checked=false;rmsg.style.color='var(--mute)';rmsg.textContent=r==='blocked'?"Notifications are blocked for this site. You can allow them in your browser's site settings.":"Sorry, that didn't work just now. You can try again from the App tab."}
+});
 function send(){const t=ta.value.trim();if(!t)return;close();const tab=document.querySelector('.tabs [data-t="coach"]');if(tab)tab.click();if(typeof sendMessage==='function')sendMessage(t)}
 ta.addEventListener('input',()=>{go.disabled=!ta.value.trim()});
 ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}});
@@ -1705,7 +1732,7 @@ go.onclick=send;skip.onclick=close;
 document.addEventListener('pointerdown',e=>{if(!wb.hidden&&!e.target.closest('.wbc'))close()},true);
 wb.addEventListener('keydown',e=>{
  if(e.key==='Escape'){e.preventDefault();close();return}
- if(e.key==='Tab'){const f=[ta,go.disabled?null:go,skip].filter(Boolean);const i=f.indexOf(document.activeElement);
+ if(e.key==='Tab'){const f=[ta,rm.hidden||rb.disabled?null:rb,go.disabled?null:go,skip].filter(Boolean);const i=f.indexOf(document.activeElement);
   if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}}
 });
 const hash=(location.hash||'').slice(1),force=/[?&]welcome=1\b/.test(location.search);
