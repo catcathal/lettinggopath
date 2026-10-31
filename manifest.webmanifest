@@ -1,0 +1,14 @@
+{
+  "name": "Letting Go",
+  "short_name": "Letting Go",
+  "description": "A free, gentle guide to letting go, with Sid, a kind AI companion.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8fbfc",
+  "theme_color": "#4a7d8a",
+  "icons": [
+    { "src": "/favicon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
