@@ -480,6 +480,13 @@ html.docoff #av,html.docoff #avHold,html.docoff #avSizeHint{display:none!importa
   main>.card[style*="text-align:center"]>p{margin-left:auto;margin-right:auto}
 }
 
+.kb{list-style:none;margin:14px 0 10px;padding:0;display:flex;flex-direction:column;gap:10px}
+.kb li{display:grid;grid-template-columns:26px 1fr 52px;grid-template-areas:"rank name pct" ". bar bar";column-gap:8px;row-gap:4px;align-items:center;font:15px system-ui,sans-serif;color:var(--ink)}
+.kb .r{grid-area:rank;color:var(--mute);font-size:13px;text-align:right}
+.kb .n{grid-area:name;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kb .p{grid-area:pct;text-align:right;font-weight:600}
+.kb .b{grid-area:bar;height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.kb .b i{display:block;height:100%;border-radius:999px;background:var(--acc)}
 #pushHour{font:inherit;padding:7px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
 /* ===== Chat bubbles with Sid's avatar (all screen sizes) ===== */
 html.chatmode #avc.chat .m.c{position:relative;margin-left:42px;max-width:calc(100% - 50px);border-top-left-radius:5px}
@@ -706,6 +713,7 @@ html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-40px;top
 <textarea id="kText" maxlength="220" placeholder="You are not alone in this…"></textarea>
 <div id="kCount">0 / 220</div>
 <p class="sub" style="font-size:12px">Messages are anonymous and go to a random stranger. This is the open internet, so you may get memes, jokes or even unkind messages back. Please send something kind, don't include names, contact details or anything private, and don't take anything you receive personally. If a message upsets you, just close it. It says nothing about you.</p>
+<p class="sub" style="font-size:12px">Only the country you are in is recorded (never your location or IP address), for the leaderboard below.</p>
 <div class="chips" style="justify-content:center">
 <button id="kSend">Send it into the world</button>
 <button class="ghost" id="kCancel">Cancel</button>
@@ -733,6 +741,13 @@ html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-40px;top
 </div>
 </div>
 <p class="sub" id="kSetup" style="display:none;text-align:center">⚙ This tab couldn't connect just now.</p>
+<div class="card" id="kBoard">
+<h2 style="margin-top:0;text-align:center">Top 10 countries</h2>
+<p class="sub" style="text-align:center">Share of all kind messages sent, by the country they were sent from.</p>
+<ol id="kBoardList" class="kb"></ol>
+<p class="sub" id="kBoardEmpty" style="text-align:center;display:none">The leaderboard appears once enough messages have been shared from around the world.</p>
+<p class="sub" style="font-size:12px;text-align:center;margin-bottom:0">Based on where each message is sent from, so it is approximate.</p>
+</div>
 </section>
 
 <section class="view" id="prac">
@@ -1313,6 +1328,38 @@ $('kAgain').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.disp
 $('kDone').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.display='block'};
 })();
 
+
+
+/* ---- Sharing tab: top 10 countries (share of messages sent) ---- */
+(function(){
+ const list=$('kBoardList');if(!list)return;
+ const sb=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false}}):null;
+ let names=null;try{names=new Intl.DisplayNames(['en'],{type:'region'})}catch(e){}
+ const flag=c=>String.fromCodePoint.apply(null,c.split('').map(ch=>127397+ch.charCodeAt(0)));
+ const nameOf=c=>{try{return(names&&names.of(c))||c}catch(e){return c}};
+ let loaded=0;
+ async function load(){
+  if(!sb||Date.now()-loaded<30000)return;loaded=Date.now();
+  try{
+   const {data,error}=await sb.rpc('get_country_leaderboard');if(error)throw error;
+   list.textContent='';
+   const rows=Array.isArray(data)?data:[];
+   $('kBoardEmpty').style.display=rows.length?'none':'block';
+   const top=rows.length?Math.max.apply(null,rows.map(r=>Number(r.pct))):1;
+   rows.forEach((r,i)=>{
+    const li=document.createElement('li');
+    const rk=document.createElement('span');rk.className='r';rk.textContent=String(i+1);
+    const nm=document.createElement('span');nm.className='n';nm.textContent=flag(r.country)+' '+nameOf(r.country);
+    const pc=document.createElement('span');pc.className='p';pc.textContent=Number(r.pct).toFixed(1)+'%';
+    const bar=document.createElement('span');bar.className='b';bar.setAttribute('aria-hidden','true');
+    const fill=document.createElement('i');fill.style.width=Math.max(4,Math.round(100*Number(r.pct)/top))+'%';bar.appendChild(fill);
+    li.appendChild(rk);li.appendChild(nm);li.appendChild(pc);li.appendChild(bar);list.appendChild(li);
+   });
+  }catch(e){console.error('Leaderboard failed:',e);loaded=0}
+ }
+ const tab=document.querySelector('.tabs [data-t="kind"]');if(tab)tab.addEventListener('click',()=>setTimeout(load,50));
+ if(document.getElementById('kind').classList.contains('on'))load();
+})();
 
 /* ---- Optional daily reminder (web push) ---- */
 (function(){
