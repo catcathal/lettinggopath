@@ -740,11 +740,10 @@ html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-40px;top
 </div>
 </div>
 <p class="sub" id="kSetup" style="display:none;text-align:center">⚙ This tab couldn't connect just now.</p>
-<div class="card" id="kBoard">
+<div class="card" id="kBoard" style="display:none">
 <h2 style="margin-top:0;text-align:center">Top 10 countries by visits</h2>
 <p class="sub" style="text-align:center">Share of all visits to this site, by country.</p>
 <ol id="kBoardList" class="kb"></ol>
-<p class="sub" id="kBoardEmpty" style="text-align:center;display:none">The leaderboard appears once enough people have visited from around the world.</p>
 <p class="sub" style="font-size:12px;text-align:center;margin-bottom:0">Each visit is counted by country only. No IP address or personal details are stored. Countries are approximate.</p>
 </div>
 </section>
@@ -1354,7 +1353,7 @@ $('kDone').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.displ
    const {data,error}=await sb.rpc('get_country_leaderboard');if(error)throw error;
    list.textContent='';
    const rows=Array.isArray(data)?data:[];
-   $('kBoardEmpty').style.display=rows.length?'none':'block';
+   $('kBoard').style.display=rows.length?'':'none';
    const top=rows.length?Math.max.apply(null,rows.map(r=>Number(r.pct))):1;
    rows.forEach((r,i)=>{
     const li=document.createElement('li');
