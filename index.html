@@ -713,7 +713,6 @@ html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-40px;top
 <textarea id="kText" maxlength="220" placeholder="You are not alone in this…"></textarea>
 <div id="kCount">0 / 220</div>
 <p class="sub" style="font-size:12px">Messages are anonymous and go to a random stranger. This is the open internet, so you may get memes, jokes or even unkind messages back. Please send something kind, don't include names, contact details or anything private, and don't take anything you receive personally. If a message upsets you, just close it. It says nothing about you.</p>
-<p class="sub" style="font-size:12px">Only the country you are in is recorded (never your location or IP address), for the leaderboard below.</p>
 <div class="chips" style="justify-content:center">
 <button id="kSend">Send it into the world</button>
 <button class="ghost" id="kCancel">Cancel</button>
@@ -742,11 +741,11 @@ html.chatmode #avc.chat .m.c::before{content:"";position:absolute;left:-40px;top
 </div>
 <p class="sub" id="kSetup" style="display:none;text-align:center">⚙ This tab couldn't connect just now.</p>
 <div class="card" id="kBoard">
-<h2 style="margin-top:0;text-align:center">Top 10 countries</h2>
-<p class="sub" style="text-align:center">Share of all kind messages sent, by the country they were sent from.</p>
+<h2 style="margin-top:0;text-align:center">Top 10 countries by visits</h2>
+<p class="sub" style="text-align:center">Share of all visits to this site, by country.</p>
 <ol id="kBoardList" class="kb"></ol>
-<p class="sub" id="kBoardEmpty" style="text-align:center;display:none">The leaderboard appears once enough messages have been shared from around the world.</p>
-<p class="sub" style="font-size:12px;text-align:center;margin-bottom:0">Based on where each message is sent from, so it is approximate.</p>
+<p class="sub" id="kBoardEmpty" style="text-align:center;display:none">The leaderboard appears once enough people have visited from around the world.</p>
+<p class="sub" style="font-size:12px;text-align:center;margin-bottom:0">Each visit is counted by country only. No IP address or personal details are stored. Countries are approximate.</p>
 </div>
 </section>
 
@@ -1330,7 +1329,18 @@ $('kDone').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.displ
 
 
 
-/* ---- Sharing tab: top 10 countries (share of messages sent) ---- */
+
+/* ---- Count this visit by country (once per browser session; no IP or identifiers stored) ---- */
+(function(){
+ try{
+  if(sessionStorage.getItem('visitCounted')==='1')return;
+  if(navigator.webdriver||/bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent||''))return;
+  if(!(window.supabase&&window.supabase.createClient))return;
+  const c=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+  setTimeout(()=>{c.rpc('record_visit').then(r=>{if(!r.error){try{sessionStorage.setItem('visitCounted','1')}catch(e){}}}).catch(()=>{})},1500);
+ }catch(e){}
+})();
+/* ---- Sharing tab: top 10 countries (share of visits) ---- */
 (function(){
  const list=$('kBoardList');if(!list)return;
  const sb=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false}}):null;
