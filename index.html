@@ -1349,7 +1349,7 @@ $('kDone').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.displ
  const nameOf=c=>{try{return(names&&names.of(c))||c}catch(e){return c}};
  let loaded=0;
  async function load(){
-  if(!sb||Date.now()-loaded<30000)return;loaded=Date.now();
+  if(!sb||Date.now()-loaded<25000)return;loaded=Date.now();
   try{
    const {data,error}=await sb.rpc('get_country_leaderboard');if(error)throw error;
    list.textContent='';
@@ -1369,6 +1369,9 @@ $('kDone').onclick=()=>{$('kMatch').style.display='none';$('kIntro').style.displ
  }
  const tab=document.querySelector('.tabs [data-t="kind"]');if(tab)tab.addEventListener('click',()=>setTimeout(load,50));
  if(document.getElementById('kind').classList.contains('on'))load();
+ /* keep it live: refresh every 30 seconds while the Sharing tab is showing and the page is visible */
+ setInterval(()=>{if(!document.hidden&&document.getElementById('kind').classList.contains('on'))load()},30000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&document.getElementById('kind').classList.contains('on'))load()});
 })();
 
 /* ---- Optional daily reminder (web push) ---- */
